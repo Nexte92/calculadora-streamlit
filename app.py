@@ -19,11 +19,11 @@ def realizar_calculos(valor_total_produto, valor_total_nota, quantidade, valor_u
     usar_no_desconto = valor_total_sem_desconto - valor_total_com_desconto
 
     return {
-        "desconto_em_porcentagem": round(desconto_em_porcentagem * 100, 2),
-        "valor_unitario_com_desconto": f"R$ {valor_unitario_com_desconto:.4f}",
-        "usar_no_desconto": f"R$ {usar_no_desconto:.2f}",
-        "valor_total_com_desconto": f"R$ {valor_total_com_desconto:.2f}",
-        "valor_total_sem_desconto": f"R$ {valor_total_sem_desconto:.2f}",
+        "desconto_em_porcentagem": f"{round(desconto_em_porcentagem * 100, 2):.2f}".replace(".", ","),
+        "valor_unitario_com_desconto": f"R$ {valor_unitario_com_desconto:.4f}".replace(".", ","),
+        "usar_no_desconto": f"R$ {usar_no_desconto:.2f}".replace(".", ","),
+        "valor_total_com_desconto": f"R$ {valor_total_com_desconto:.2f}".replace(".", ","),
+        "valor_total_sem_desconto": f"R$ {valor_total_sem_desconto:.2f}".replace(".", ","),
     }
 
 # Configuração da interface do Streamlit
