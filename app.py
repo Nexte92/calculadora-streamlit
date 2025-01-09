@@ -1,11 +1,11 @@
 import streamlit as st
 
-# Função para converter valores com vírgula ou ponto como separador decimal
+# Função para converter valores com separadores de milhares e decimais
 def converter_valor(valor):
-    """Converte string com ponto ou vírgula para float."""
+    """Converte string com separadores de milhares (ponto ou vírgula) e decimais para float."""
     try:
-        # Substituir vírgulas por pontos para compatibilidade com float
-        valor = valor.replace(",", ".")
+        # Remover separadores de milhares (pontos) e substituir vírgulas por pontos para compatibilidade com float
+        valor = valor.replace(".", "").replace(",", ".")
         return float(valor)
     except ValueError:
         return None
@@ -44,11 +44,11 @@ valor_unitario = converter_valor(valor_unitario_str)
 if st.button("Calcular"):
     erros = []
     if valor_total_produto is None:
-        erros.append("Valor Total Produto inválido. Use apenas números, ponto ou vírgula.")
+        erros.append("Valor Total Produto inválido. Use apenas números com vírgulas e/ou pontos.")
     if valor_total_nota is None:
-        erros.append("Valor Total Nota inválido. Use apenas números, ponto ou vírgula.")
+        erros.append("Valor Total Nota inválido. Use apenas números com vírgulas e/ou pontos.")
     if valor_unitario is None:
-        erros.append("Valor Unitário inválido. Use apenas números, ponto ou vírgula.")
+        erros.append("Valor Unitário inválido. Use apenas números com vírgulas e/ou pontos.")
 
     if erros:
         for erro in erros:
