@@ -42,8 +42,17 @@ valor_unitario = converter_valor(valor_unitario_str)
 
 # Botão para realizar os cálculos
 if st.button("Calcular"):
-    if None in (valor_total_produto, valor_total_nota, valor_unitario):
-        st.error("Por favor, insira valores válidos nos campos monetários usando ponto ou vírgula como separador decimal.")
+    erros = []
+    if valor_total_produto is None:
+        erros.append("Valor Total Produto inválido. Use apenas números, ponto ou vírgula.")
+    if valor_total_nota is None:
+        erros.append("Valor Total Nota inválido. Use apenas números, ponto ou vírgula.")
+    if valor_unitario is None:
+        erros.append("Valor Unitário inválido. Use apenas números, ponto ou vírgula.")
+
+    if erros:
+        for erro in erros:
+            st.error(erro)
     else:
         # Realizar os cálculos e exibir os resultados
         resultado = realizar_calculos(valor_total_produto, valor_total_nota, quantidade, valor_unitario)
