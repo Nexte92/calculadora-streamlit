@@ -27,7 +27,7 @@ def realizar_calculos(valor_total_produto, valor_total_nota, quantidade, valor_u
     }
 
 # Configuração da interface do Streamlit
-st.title("Calculadora de Descontos")
+st.title("Calculadora de Descontos e Despesas")
 
 # Entradas do usuário
 valor_total_produto_str = st.text_input("Valor Total Produto (R$)")
