@@ -1,16 +1,16 @@
-import locale
 import streamlit as st
 
-# Configurar o locale para lidar com separadores de ponto e vírgula
-locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
-
+# Função para converter valores com vírgula ou ponto como separador decimal
 def converter_valor(valor):
     """Converte string com ponto ou vírgula para float."""
     try:
-        return locale.atof(valor)
+        # Substituir vírgulas por pontos para compatibilidade com float
+        valor = valor.replace(",", ".")
+        return float(valor)
     except ValueError:
         return None
 
+# Função para realizar os cálculos
 def realizar_calculos(valor_total_produto, valor_total_nota, quantidade, valor_unitario):
     desconto_em_porcentagem = 1 - (valor_total_nota / valor_total_produto)
     valor_unitario_com_desconto = -(valor_unitario * (desconto_em_porcentagem - 1))
