@@ -180,7 +180,7 @@ def pagina_calculo_fornecedor():
         with col_peca2:
             valor_unit_str = st.text_input("Valor Unitário (sem desc.)", "0,00")
         with col_peca3:
-            valor_total_desc_str = st.text_input("Valor Total (com desc.)", "0,00")
+            valor_total_desc_str = st.text_input("Valor Total do desconto (com desc.)", "0,00")
 
         submitted_peca = st.form_submit_button("Calcular Desconto", use_container_width=True)
 
@@ -255,4 +255,3 @@ pagina_selecionada()
 
 st.sidebar.markdown("---")
 st.sidebar.info("Aplicativo desenvolvido para cálculos financeiros rápidos.")
-
