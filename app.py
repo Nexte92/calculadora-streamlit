@@ -217,19 +217,22 @@ def pagina_calculo_fornecedor():
                     desconto_total = 0
 
                 desconto_por_peca = desconto_total / qtd_peca if qtd_peca > 0 else 0
-                percentual_desconto = (desconto_total / valor_total_sem_desc) * 100
+                percentual_desconto = (desconto_total / valor_total_sem_desc) * 100 if valor_total_sem_desc > 0 else 0
+                valor_unitario_com_desconto = valor_total_desc / qtd_peca if qtd_peca > 0 else 0
+
 
                 st.session_state.calculo_peca_feito = True
                 st.session_state.desconto_unitario_peca = desconto_por_peca
 
                 st.success("Cálculo realizado!")
-                col_res_peca1, col_res_peca2, col_res_peca3 = st.columns(3)
+                col_res_peca1, col_res_peca2 = st.columns(2)
                 with col_res_peca1:
                     st.metric(label="Valor Total (sem desconto)", value=formatar_valor(valor_total_sem_desc))
+                    st.metric(label="💸 Desconto por Peça", value=formatar_valor(desconto_por_peca, casas_decimais=4), help="Este é o valor do desconto rateado para cada unidade do produto.")
                 with col_res_peca2:
                     st.metric(label="Desconto Aplicado (%)", value=f"{percentual_desconto:.2f}%".replace(".", ","))
-                with col_res_peca3:
-                    st.metric(label="💸 Desconto por Peça", value=formatar_valor(desconto_por_peca, casas_decimais=4))
+                    st.metric(label="Valor Unitário (com desc.)", value=formatar_valor(valor_unitario_com_desconto, casas_decimais=4), help="Este é o preço final de cada peça após o desconto.")
+
 
     if st.session_state.calculo_peca_feito:
         st.markdown("---")
