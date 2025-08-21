@@ -133,6 +133,12 @@ def pagina_calculadora_descontos():
 # --- PÁGINA 2: CÁLCULO FORNECEDOR SB ---
 def pagina_calculo_fornecedor():
     """Exibe a interface e a lógica para o cálculo de custo do fornecedor."""
+    # Inicializa o session_state para esta página
+    if 'calculo_peca_feito' not in st.session_state:
+        st.session_state.calculo_peca_feito = False
+    if 'desconto_unitario_peca' not in st.session_state:
+        st.session_state.desconto_unitario_peca = 0.0
+
     st.header("Cálculo de Custo de Aquisição (Fornecedor SB)", divider="green")
     st.info("Esta calculadora determina a base de cálculo do custo de um produto, somando todas as despesas.")
 
@@ -168,7 +174,6 @@ def pagina_calculo_fornecedor():
             
     st.markdown("---")
     
-    # --- SEÇÃO ATUALIZADA ---
     st.header("Cálculo de Desconto por Peça", divider="blue")
     
     with st.form("calculo_desconto_peca_form"):
@@ -185,7 +190,6 @@ def pagina_calculo_fornecedor():
         submitted_peca = st.form_submit_button("Calcular Desconto", use_container_width=True)
 
         if submitted_peca:
-            # Validação e conversão
             valor_unit = converter_para_float(valor_unit_str)
             valor_total_desc = converter_para_float(valor_total_desc_str)
             
@@ -193,21 +197,21 @@ def pagina_calculo_fornecedor():
                 qtd_peca = int(qtd_peca_str)
                 if qtd_peca <= 0:
                     st.error("A quantidade de peças deve ser maior que zero.")
+                    st.session_state.calculo_peca_feito = False
                     return
             except (ValueError, TypeError):
                 st.error("A quantidade de peças deve ser um número inteiro válido.")
+                st.session_state.calculo_peca_feito = False
                 return
 
             if valor_unit is not None and valor_total_desc is not None:
-                # Cálculos
                 valor_total_sem_desc = qtd_peca * valor_unit
-                
                 if valor_total_sem_desc <= 0:
                     st.warning("O Valor Total (sem desconto) deve ser maior que zero.")
+                    st.session_state.calculo_peca_feito = False
                     return
 
                 desconto_total = valor_total_sem_desc - valor_total_desc
-                
                 if desconto_total < 0:
                     st.warning("O valor com desconto é maior que o valor original. O desconto será zero.")
                     desconto_total = 0
@@ -215,29 +219,30 @@ def pagina_calculo_fornecedor():
                 desconto_por_peca = desconto_total / qtd_peca if qtd_peca > 0 else 0
                 percentual_desconto = (desconto_total / valor_total_sem_desc) * 100
 
-                # Exibição do resultado
-                st.success("Cálculo realizado!")
-                
-                col_res_peca1, col_res_peca2, col_res_peca3 = st.columns(3)
-                
-                with col_res_peca1:
-                    st.metric(
-                        label="Valor Total (sem desconto)",
-                        value=formatar_valor(valor_total_sem_desc)
-                    )
-                
-                with col_res_peca2:
-                    st.metric(
-                        label="Desconto Aplicado (%)",
-                        value=f"{percentual_desconto:.2f}%".replace(".", ",")
-                    )
+                st.session_state.calculo_peca_feito = True
+                st.session_state.desconto_unitario_peca = desconto_por_peca
 
+                st.success("Cálculo realizado!")
+                col_res_peca1, col_res_peca2, col_res_peca3 = st.columns(3)
+                with col_res_peca1:
+                    st.metric(label="Valor Total (sem desconto)", value=formatar_valor(valor_total_sem_desc))
+                with col_res_peca2:
+                    st.metric(label="Desconto Aplicado (%)", value=f"{percentual_desconto:.2f}%".replace(".", ","))
                 with col_res_peca3:
-                    st.metric(
-                        label="💸 Desconto por Peça",
-                        value=formatar_valor(desconto_por_peca, casas_decimais=4),
-                        help="Este é o valor do desconto rateado para cada unidade do produto."
-                    )
+                    st.metric(label="💸 Desconto por Peça", value=formatar_valor(desconto_por_peca, casas_decimais=4))
+
+    if st.session_state.calculo_peca_feito:
+        st.markdown("---")
+        st.subheader("Achar o 'Desconto Total' para Devolução", divider="orange")
+        qtd_devolucao_peca = st.number_input(
+            "Insira a quantidade de peças para aplicar o total do desconto:", 
+            min_value=0, 
+            step=1, 
+            key="qtd_devolucao_fornecedor"
+        )
+        if qtd_devolucao_peca > 0:
+            valor_total_desconto_devolucao = qtd_devolucao_peca * st.session_state.desconto_unitario_peca
+            st.success(f"**Valor Total de Desconto para {qtd_devolucao_peca} peças:** {formatar_valor(valor_total_desconto_devolucao)}")
 
 
 # --- MENU PRINCIPAL E ROTEAMENTO ---
