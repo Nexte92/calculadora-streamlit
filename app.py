@@ -165,6 +165,57 @@ def pagina_calculo_fornecedor():
                 value=formatar_valor(base_de_calculo),
                 help="Este é o valor base para o custo do seu produto."
             )
+            
+    st.markdown("---")
+    
+    # --- NOVA SEÇÃO ADICIONADA ---
+    st.header("Cálculo de Desconto por Peça", divider="teal")
+    
+    with st.form("calculo_desconto_peca_form"):
+        st.write("Preencha os valores para descobrir o desconto rateado por item.")
+        
+        col_peca1, col_peca2 = st.columns(2)
+        with col_peca1:
+            qtd_peca_str = st.text_input("Quantidade de Peças (QTD)", "1")
+            valor_unit_str = st.text_input("Valor Unitário (sem desconto)", "0,00")
+        with col_peca2:
+            valor_total_desc_str = st.text_input("Valor Total da Nota (com desconto)", "0,00")
+
+        submitted_peca = st.form_submit_button("Calcular Desconto por Peça", use_container_width=True)
+
+        if submitted_peca:
+            # Validação e conversão
+            valor_unit = converter_para_float(valor_unit_str)
+            valor_total_desc = converter_para_float(valor_total_desc_str)
+            
+            try:
+                qtd_peca = int(qtd_peca_str)
+                if qtd_peca <= 0:
+                    st.error("A quantidade de peças deve ser maior que zero.")
+                    return
+            except (ValueError, TypeError):
+                st.error("A quantidade de peças deve ser um número inteiro válido.")
+                return
+
+            if valor_unit is not None and valor_total_desc is not None:
+                # Cálculos
+                valor_total_sem_desc = qtd_peca * valor_unit
+                desconto_total = valor_total_sem_desc - valor_total_desc
+                
+                if desconto_total < 0:
+                    st.warning("O valor total com desconto é maior que o valor sem desconto. O desconto será zero.")
+                    desconto_total = 0
+
+                desconto_por_peca = desconto_total / qtd_peca if qtd_peca > 0 else 0
+                
+                # Exibição do resultado
+                st.success("Cálculo realizado!")
+                st.metric(
+                    label="💸 Desconto por Peça",
+                    value=formatar_valor(desconto_por_peca, casas_decimais=4),
+                    help="Este é o valor do desconto rateado para cada unidade do produto."
+                )
+
 
 # --- MENU PRINCIPAL E ROTEAMENTO ---
 st.sidebar.title("Menu de Navegação")
