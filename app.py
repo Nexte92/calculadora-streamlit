@@ -168,20 +168,21 @@ def pagina_calculo_fornecedor():
             
     st.markdown("---")
     
-    # --- NOVA SEÇÃO ADICIONADA ---
+    # --- SEÇÃO ATUALIZADA ---
     st.header("Cálculo de Desconto por Peça", divider="blue")
     
     with st.form("calculo_desconto_peca_form"):
         st.write("Preencha os valores para descobrir o desconto rateado por item.")
         
-        col_peca1, col_peca2 = st.columns(2)
+        col_peca1, col_peca2, col_peca3 = st.columns(3)
         with col_peca1:
-            qtd_peca_str = st.text_input("Quantidade de Peças (QTD)", "1")
-            valor_unit_str = st.text_input("Valor Unitário (sem desconto)", "0,00")
+            qtd_peca_str = st.text_input("Quantidade (QTD)", "1")
         with col_peca2:
-            valor_total_desc_str = st.text_input("Valor Total da Nota (com desconto)", "0,00")
+            valor_unit_str = st.text_input("Valor Unitário (sem desc.)", "0,00")
+        with col_peca3:
+            valor_total_desc_str = st.text_input("Valor Total (com desc.)", "0,00")
 
-        submitted_peca = st.form_submit_button("Calcular Desconto por Peça", use_container_width=True)
+        submitted_peca = st.form_submit_button("Calcular Desconto", use_container_width=True)
 
         if submitted_peca:
             # Validação e conversão
@@ -200,26 +201,48 @@ def pagina_calculo_fornecedor():
             if valor_unit is not None and valor_total_desc is not None:
                 # Cálculos
                 valor_total_sem_desc = qtd_peca * valor_unit
+                
+                if valor_total_sem_desc <= 0:
+                    st.warning("O Valor Total (sem desconto) deve ser maior que zero.")
+                    return
+
                 desconto_total = valor_total_sem_desc - valor_total_desc
                 
                 if desconto_total < 0:
-                    st.warning("O valor total com desconto é maior que o valor sem desconto. O desconto será zero.")
+                    st.warning("O valor com desconto é maior que o valor original. O desconto será zero.")
                     desconto_total = 0
 
                 desconto_por_peca = desconto_total / qtd_peca if qtd_peca > 0 else 0
-                
+                percentual_desconto = (desconto_total / valor_total_sem_desc) * 100
+
                 # Exibição do resultado
                 st.success("Cálculo realizado!")
-                st.metric(
-                    label="💸 Desconto por Peça",
-                    value=formatar_valor(desconto_por_peca, casas_decimais=4),
-                    help="Este é o valor do desconto rateado para cada unidade do produto."
-                )
+                
+                col_res_peca1, col_res_peca2, col_res_peca3 = st.columns(3)
+                
+                with col_res_peca1:
+                    st.metric(
+                        label="Valor Total (sem desconto)",
+                        value=formatar_valor(valor_total_sem_desc)
+                    )
+                
+                with col_res_peca2:
+                    st.metric(
+                        label="Desconto Aplicado (%)",
+                        value=f"{percentual_desconto:.2f}%".replace(".", ",")
+                    )
+
+                with col_res_peca3:
+                    st.metric(
+                        label="💸 Desconto por Peça",
+                        value=formatar_valor(desconto_por_peca, casas_decimais=4),
+                        help="Este é o valor do desconto rateado para cada unidade do produto."
+                    )
 
 
 # --- MENU PRINCIPAL E ROTEAMENTO ---
 st.sidebar.title("Menu de Navegação")
-st.sidebar.image("https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2511&auto=format&fit=crop", use_container_width=True)
+st.sidebar.image("https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2511&auto.format&fit=crop", use_container_width=True)
 
 paginas = {
     "Calculadora de Descontos": pagina_calculadora_descontos,
@@ -232,3 +255,4 @@ pagina_selecionada()
 
 st.sidebar.markdown("---")
 st.sidebar.info("Aplicativo desenvolvido para cálculos financeiros rápidos.")
+
