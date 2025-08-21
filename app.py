@@ -138,6 +138,9 @@ def pagina_calculo_fornecedor():
         st.session_state.calculo_peca_feito = False
     if 'desconto_unitario_peca' not in st.session_state:
         st.session_state.desconto_unitario_peca = 0.0
+    if 'valor_unitario_final_peca' not in st.session_state:
+        st.session_state.valor_unitario_final_peca = 0.0
+
 
     st.header("Cálculo de Custo de Aquisição (Fornecedor SB)", divider="green")
     st.info("Esta calculadora determina a base de cálculo do custo de um produto, somando todas as despesas.")
@@ -223,6 +226,8 @@ def pagina_calculo_fornecedor():
 
                 st.session_state.calculo_peca_feito = True
                 st.session_state.desconto_unitario_peca = desconto_por_peca
+                st.session_state.valor_unitario_final_peca = valor_unitario_com_desconto
+
 
                 st.success("Cálculo realizado!")
                 col_res_peca1, col_res_peca2 = st.columns(2)
@@ -236,16 +241,16 @@ def pagina_calculo_fornecedor():
 
     if st.session_state.calculo_peca_feito:
         st.markdown("---")
-        st.subheader("Achar o 'Desconto Total' para Devolução", divider="orange")
+        st.subheader("Calcular Valor Total para Devolução", divider="orange")
         qtd_devolucao_peca = st.number_input(
-            "Insira a quantidade de peças para aplicar o total do desconto:", 
+            "Insira a quantidade de peças para devolução:", 
             min_value=0, 
             step=1, 
             key="qtd_devolucao_fornecedor"
         )
         if qtd_devolucao_peca > 0:
-            valor_total_desconto_devolucao = qtd_devolucao_peca * st.session_state.desconto_unitario_peca
-            st.success(f"**Valor Total de Desconto para {qtd_devolucao_peca} peças:** {formatar_valor(valor_total_desconto_devolucao)}")
+            valor_total_devolucao = qtd_devolucao_peca * st.session_state.valor_unitario_final_peca
+            st.success(f"**Valor Total para Devolução de {qtd_devolucao_peca} peças:** {formatar_valor(valor_total_devolucao)}")
 
 
 # --- MENU PRINCIPAL E ROTEAMENTO ---
