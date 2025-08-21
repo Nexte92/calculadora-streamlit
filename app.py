@@ -169,7 +169,7 @@ def pagina_calculo_fornecedor():
     st.markdown("---")
     
     # --- NOVA SEÇÃO ADICIONADA ---
-    st.header("Cálculo de Desconto por Peça", divider="teal")
+    st.header("Cálculo de Desconto por Peça", divider="blue")
     
     with st.form("calculo_desconto_peca_form"):
         st.write("Preencha os valores para descobrir o desconto rateado por item.")
