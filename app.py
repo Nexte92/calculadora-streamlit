@@ -233,10 +233,10 @@ def pagina_calculo_fornecedor():
                 col_res_peca1, col_res_peca2 = st.columns(2)
                 with col_res_peca1:
                     st.metric(label="Valor Total (sem desconto)", value=formatar_valor(valor_total_sem_desc))
-                    st.metric(label="💸 Valor Unitario (Com desconto)", value=formatar_valor(desconto_por_peca, casas_decimais=4), help="Este é o valor do desconto rateado para cada unidade do produto.")
+                    st.metric(label="💸 Valor Unitario (Com desconto)", value=formatar_valor(desconto_por_peca, casas_decimais=4), help="Este é o valor após a aplicação do desconto.")
                 with col_res_peca2:
                     st.metric(label="Desconto Aplicado (%)", value=f"{percentual_desconto:.2f}%".replace(".", ","))
-                    st.metric(label="Valor Unitario (do desconto)", value=formatar_valor(valor_unitario_com_desconto, casas_decimais=4), help="Este é o preço final de cada peça após o desconto.")
+                    st.metric(label="Valor Unitario (do desconto)", value=formatar_valor(valor_unitario_com_desconto, casas_decimais=4), help="Este é o valor unitário do desconto aplicado para cada produto.")
 
 
     if st.session_state.calculo_peca_feito:
