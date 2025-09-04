@@ -152,7 +152,7 @@ st.markdown("""
         margin: 2rem 0;
         border: none;
         height: 2px;
-        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        background: linear-gradient(90deg, transparent, #4facfe, transparent);
     }
 </style>
 """, unsafe_allow_html=True)
