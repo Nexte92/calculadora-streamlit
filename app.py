@@ -587,10 +587,15 @@ def main():
     # Footer da sidebar
     st.sidebar.markdown("---")
     st.sidebar.markdown("""
-    <div style="text-align: center; color: #7f8c8d; font-size: 0.8rem; padding: 1rem;">
-        <p>🚀 <strong>FinanceCalc Pro</strong></p>
-        <p>Desenvolvido para otimizar<br>seus cálculos financeiros</p>
-        <p>📊 Versão 2.0</p>
+    <div style="text-align: center; color: #546e7a; font-size: 0.8rem; padding: 1.5rem 0.5rem;">
+        <div style="background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(30, 136, 229, 0.1);">
+            <p style="margin: 0; font-weight: 600; color: #1e88e5;">🚀 FinanceCalc Pro</p>
+            <p style="margin: 0.5rem 0; font-size: 0.75rem;">Desenvolvido para otimizar<br>seus cálculos financeiros</p>
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+                <span style="background: #1e88e5; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">v2.0</span>
+                <span style="background: #2e7d32; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">PRO</span>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
