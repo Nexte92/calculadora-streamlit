@@ -519,6 +519,10 @@ def pagina_conversor_unidade():
         st.session_state.conversao_feita = False
     if 'valor_por_peca' not in st.session_state:
         st.session_state.valor_por_peca = 0.0
+    if 'qtd_por_caixa_atual' not in st.session_state:
+        st.session_state.qtd_por_caixa_atual = 1
+    if 'valor_caixa_atual' not in st.session_state:
+        st.session_state.valor_caixa_atual = 0.0
 
     criar_section_header("📦 Dados da Caixa")
     
