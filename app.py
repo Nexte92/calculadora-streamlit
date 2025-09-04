@@ -522,6 +522,8 @@ def main():
     
     if selecao == "🧮 Calculadora de Descontos":
         pagina_calculadora_descontos()
+    elif selecao == "🔄 Calculadora de Devolução NFD":
+        pagina_calculadora_devolucao()
     elif selecao == "🏭 Cálculo Fornecedor SB":
         pagina_calculo_fornecedor()
     
