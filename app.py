@@ -221,13 +221,13 @@ def criar_card_resultado(titulo, valor, tipo="result"):
     </div>
     """, unsafe_allow_html=True)
 
-# --- PÁGINA 1: CALCULADORA DE DESCONTOS ---
+# --- PÁGINA 1: CALCULADORA DE DEVOLUÇÃO NFD ---
 
 def pagina_calculadora_descontos():
-    """Exibe a interface e a lógica para a calculadora de descontos."""
+    """Exibe a interface e a lógica para a calculadora de devolução NFD."""
     
     # Header principal
-    criar_header("🧮 Calculadora de Descontos", "Calcule descontos e gerencie devoluções com precisão profissional")
+    criar_header("📋 Calculadora de Devolução NFD", "Calcule descontos e gerencie devoluções com precisão profissional")
 
     # Inicializa o session_state
     if 'desconto_por_peca' not in st.session_state:
@@ -355,27 +355,16 @@ def pagina_calculadora_descontos():
                 )
                 st.info("Use este valor no campo 'desconto' da NFD")
 
-# --- PÁGINA 2: CÁLCULO FORNECEDOR SB ---
-def pagina_calculo_fornecedor():
-    """Exibe a interface e a lógica para o cálculo de custo do fornecedor."""
+# --- PÁGINA 2: CUSTO DE AQUISIÇÃO ---
+def pagina_custo_aquisicao():
+    """Exibe a interface e a lógica para o cálculo de custo de aquisição."""
     
     # Header
-    criar_header("🏭 Cálculo Fornecedor SB", "Calcule custos de aquisição e gerencie descontos por peça")
-    
-    # Session state
-    if 'calculo_peca_feito' not in st.session_state:
-        st.session_state.calculo_peca_feito = False
-    if 'desconto_unitario_peca' not in st.session_state:
-        st.session_state.desconto_unitario_peca = 0.0
-    if 'valor_unitario_final_peca' not in st.session_state:
-        st.session_state.valor_unitario_final_peca = 0.0
-
-    # Custo de Aquisição
-    criar_section_header("💰 Custo de Aquisição")
+    criar_header("💰 Custo de Aquisição", "Calcule a base de cálculo do custo, somando todas as despesas")
     
     st.info("📋 Esta calculadora determina a base de cálculo do custo, somando todas as despesas.")
 
-    with st.form("calculo_fornecedor"):
+    with st.form("calculo_custo_aquisicao"):
         col1, col2 = st.columns(2, gap="large")
         
         with col1:
@@ -402,14 +391,43 @@ def pagina_calculo_fornecedor():
             valor_nota, valor_frete, valor_seguro, outras_despesas, desconto, ipi = valores
             base_de_calculo = (valor_nota + valor_frete + valor_seguro + outras_despesas - desconto + ipi)
 
+            # Resultado detalhado
+            criar_section_header("📊 Detalhamento do Custo")
+            
+            col1, col2 = st.columns(2, gap="medium")
+            
+            with col1:
+                st.metric("📄 Nota Fiscal", formatar_valor(valor_nota))
+                st.metric("🚚 Frete", formatar_valor(valor_frete))
+                st.metric("🛡️ Seguro", formatar_valor(valor_seguro))
+            
+            with col2:
+                st.metric("🔧 Outras Despesas", formatar_valor(outras_despesas))
+                st.metric("💸 Desconto", formatar_valor(desconto))
+                st.metric("📊 IPI", formatar_valor(ipi))
+
             criar_card_resultado(
                 "💰 Custo Total de Aquisição",
                 formatar_valor(base_de_calculo),
                 "success"
             )
-            
+
+# --- PÁGINA 3: CÁLCULO FORNECEDOR SB ---
+def pagina_calculo_fornecedor():
+    """Exibe a interface e a lógica para o cálculo de desconto do fornecedor."""
+    
+    # Header
+    criar_header("🏭 Cálculo Fornecedor SB", "Gerencie descontos por peça e valores para devolução")
+    
+    # Session state
+    if 'calculo_peca_feito' not in st.session_state:
+        st.session_state.calculo_peca_feito = False
+    if 'desconto_unitario_peca' not in st.session_state:
+        st.session_state.desconto_unitario_peca = 0.0
+    if 'valor_unitario_final_peca' not in st.session_state:
+        st.session_state.valor_unitario_final_peca = 0.0
+
     # Desconto por Peça
-    st.markdown("---")
     criar_section_header("🎯 Desconto por Peça")
     
     with st.form("calculo_desconto_peca_form"):
@@ -487,6 +505,118 @@ def pagina_calculo_fornecedor():
                     "success"
                 )
 
+# --- PÁGINA 4: CONVERSOR DE UNIDADE DE MEDIDA ---
+def pagina_conversor_unidade():
+    """Exibe a interface e a lógica para o conversor de unidade de medida."""
+    
+    # Header
+    criar_header("📏 Conversor de Unidade de Medida", "Converta valores entre caixa e peças facilmente")
+    
+    st.info("🔧 Digite a quantidade por caixa e o valor da caixa para obter o valor unitário por peça.")
+    
+    # Session state
+    if 'conversao_feita' not in st.session_state:
+        st.session_state.conversao_feita = False
+    if 'valor_por_peca' not in st.session_state:
+        st.session_state.valor_por_peca = 0.0
+
+    criar_section_header("📦 Dados da Caixa")
+    
+    with st.form("conversor_unidade_form"):
+        col1, col2 = st.columns(2, gap="large")
+        
+        with col1:
+            st.markdown("**📊 Informações da Caixa**")
+            qtd_por_caixa_str = st.text_input(
+                "📦 Quantidade por Caixa", 
+                "1",
+                help="Quantas peças vêm em uma caixa"
+            )
+            valor_caixa_str = st.text_input(
+                "💰 Valor da Caixa", 
+                "0,00",
+                help="Valor total de uma caixa completa"
+            )
+        
+        with col2:
+            st.markdown("**🎯 Resultado**")
+            st.markdown("O valor por unidade (peça) será calculado automaticamente.")
+            st.markdown("**Fórmula:** Valor da Caixa ÷ Quantidade por Caixa")
+
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            submitted = st.form_submit_button("🧮 Converter", use_container_width=True)
+
+        if submitted:
+            # Validações
+            try:
+                qtd_por_caixa = int(qtd_por_caixa_str)
+                if qtd_por_caixa <= 0:
+                    st.error("⚠️ A quantidade por caixa deve ser maior que zero.")
+                    return
+            except (ValueError, TypeError):
+                st.error("⚠️ A quantidade por caixa deve ser um número inteiro válido.")
+                return
+
+            valor_caixa = converter_para_float(valor_caixa_str)
+            if valor_caixa is None:
+                return
+            
+            if valor_caixa <= 0:
+                st.warning("⚠️ O valor da caixa deve ser maior que zero.")
+                return
+
+            # Cálculo
+            valor_por_peca = valor_caixa / qtd_por_caixa
+            
+            # Armazena os resultados
+            st.session_state.conversao_feita = True
+            st.session_state.valor_por_peca = valor_por_peca
+
+    # Resultados
+    if st.session_state.conversao_feita:
+        criar_section_header("✅ Resultado da Conversão")
+        
+        col1, col2, col3 = st.columns(3, gap="medium")
+        
+        with col1:
+            st.metric("📦 Qtd por Caixa", f"{int(qtd_por_caixa_str)} peças")
+        
+        with col2:
+            st.metric("💰 Valor da Caixa", formatar_valor(valor_caixa))
+        
+        with col3:
+            criar_card_resultado(
+                "🎯 Valor por Peça",
+                formatar_valor(st.session_state.valor_por_peca, casas_decimais=4),
+                "success"
+            )
+
+        # Calculadora adicional
+        st.markdown("---")
+        criar_section_header("🧮 Calculadora de Quantidade")
+        
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            qtd_pecas_desejada = st.number_input("🔢 Quantas peças você quer?", min_value=0, step=1)
+        
+        with col2:
+            if qtd_pecas_desejada > 0:
+                valor_total_pecas = qtd_pecas_desejada * st.session_state.valor_por_peca
+                caixas_necessarias = qtd_pecas_desejada / int(qtd_por_caixa_str)
+                caixas_inteiras = int(caixas_necessarias)
+                pecas_avulsas = qtd_pecas_desejada % int(qtd_por_caixa_str)
+                
+                st.success(f"💰 **Valor Total:** {formatar_valor(valor_total_pecas)}")
+                
+                if caixas_inteiras > 0:
+                    st.info(f"📦 **{caixas_inteiras}** caixa(s) completa(s)")
+                    if pecas_avulsas > 0:
+                        st.info(f"➕ **{pecas_avulsas}** peça(s) avulsa(s)")
+                else:
+                    st.info(f"📦 **{qtd_pecas_desejada}** peça(s) avulsa(s)")
+
 # --- SIDEBAR E NAVEGAÇÃO ---
 def configurar_sidebar():
     """Configura a sidebar."""
@@ -511,7 +641,7 @@ def configurar_sidebar():
     
     return st.sidebar.radio(
         "",
-        ["🧮 Calculadora de Descontos", "🏭 Cálculo Fornecedor SB"],
+        ["📋 Calculadora de Devolução NFD", "💰 Custo de Aquisição", "🏭 Cálculo Fornecedor SB", "📏 Conversor de Unidade"],
         key="navegacao_principal"
     )
 
@@ -520,12 +650,14 @@ def main():
     """Função principal da aplicação."""
     selecao = configurar_sidebar()
     
-    if selecao == "🧮 Calculadora de Descontos":
+    if selecao == "📋 Calculadora de Devolução NFD":
         pagina_calculadora_descontos()
-    elif selecao == "🔄 Calculadora de Devolução NFD":
-        pagina_calculadora_devolucao()
+    elif selecao == "💰 Custo de Aquisição":
+        pagina_custo_aquisicao()
     elif selecao == "🏭 Cálculo Fornecedor SB":
         pagina_calculo_fornecedor()
+    elif selecao == "📏 Conversor de Unidade":
+        pagina_conversor_unidade()
     
     # Footer
     st.sidebar.markdown("---")
